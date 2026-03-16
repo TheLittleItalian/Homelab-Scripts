@@ -1,0 +1,106 @@
+Sysadmin Scripting Cheat Sheet
+
+1. Bash Basics
+
+Shebang: #!/bin/bash
+
+Variables: VAR="value"
+
+Arrays: ARR=(one two three); access with ${ARR[@]}
+
+Loops: for x in "${ARR[@]}"; do ...; done
+
+If-Else: if [ condition ]; then ...; else ...; fi
+
+
+2. I/O & Redirection
+
+Redirect stdout: command > file
+
+Append stdout: command >> file
+
+Redirect stderr: command 2> file
+
+Redirect both: command >> file 2>&1
+
+Suppress output: > /dev/null 2>&1
+
+Bypass interactive prompts: < /dev/null
+
+
+3. Package Management
+
+Arch/Garuda: sudo pacman -Sy, sudo pacman -Syu, pacman -Qtdq, sudo garuda-update
+
+Debian/Ubuntu: sudo apt update, sudo apt upgrade -y, sudo apt autoremove -y
+
+
+4. File & Disk Management
+
+List disks: lsblk -dn -o NAME,TYPE | awk '$2=="disk"'
+
+Disk info: sudo smartctl -i /dev/sda
+
+SMART attributes: sudo smartctl -A /dev/sda | grep -E "Temperature|Temp|Celsius"
+
+Create directories: mkdir -p "$DIR"
+
+Count lines: wc -l < "$file"
+
+
+5. Logging
+
+Save output: command >> "$LOG_FILE"
+
+Include errors: command >> "$LOG_FILE" 2>&1
+
+Timestamp logs: DATE=$(date +'%Y-%m-%d_%H-%M-%S')
+
+
+6. Networking & Security
+
+Open ports: ss -tuln
+
+Firewall: sudo ufw status verbose or sudo iptables -L -v -n or sudo nft list ruleset
+
+Ping test: ping -c 3 8.8.8.8
+
+DNS test: dig +short google.com or nslookup google.com
+
+Failed SSH logins: journalctl _COMM=sshd -p 3 --since "24 hours ago"
+
+
+7. Systemd Timer / Automation
+
+Create service: /etc/systemd/system/myscript.service
+
+Create timer: /etc/systemd/system/myscript.timer
+
+Enable & start: sudo systemctl enable --now myscript.timer
+
+Status: systemctl status myscript.timer
+
+
+8. Error Checking Patterns
+
+Check if file exists: [ -f "$file" ]
+
+Check if variable is empty: [ -z "$VAR" ]
+
+Check if variable has content: [ -n "$VAR" ]
+
+Log errors: command >> "$LOG_FILE" 2>&1
+
+
+9. Scripting Patterns
+
+Use arrays for commands:
+
+
+commands=("sudo apt update -y" "sudo apt upgrade -y")
+for cmd in "${commands[@]}"; do
+  echo "Running: $cmd" >> "$LOG_FILE"
+  $cmd >> "$LOG_FILE" 2>&1 < /dev/null
+done
+
+Always quote variables containing paths or filenames: "$VAR"
