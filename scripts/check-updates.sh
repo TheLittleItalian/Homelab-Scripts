@@ -17,7 +17,7 @@ FLATPAK_LOG="$LOG_DIR/${DATE}_flatpak_upgrades.txt"
 REQUIRED_PKGS=(flatpak kdialog)
 MISSING_PKGS=()
 
-for pkg in "${REQUIRED_PKGS[@]}; do
+for pkg in "${REQUIRED_PKGS[@]}"; do
 	if ! pacman -Qi "$pkg" &>/dev/null; then
 		MISSING_PKGS+=("$pkg")
 	fi
@@ -25,7 +25,7 @@ done
 
 if [ "${#MISSING_PKGS[@]}" -gt 0 ]; then
 	echo "Installing missing dependencies: ${MISSING_PKGS[*]}"
-	sudo pacman -S --noconfirm "${MISSING_PKGS[@}}"
+	sudo pacman -S --noconfirm "${MISSING_PKGS[@]}"
 fi
 
 UPDATED=false
